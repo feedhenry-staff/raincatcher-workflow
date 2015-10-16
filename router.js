@@ -31,7 +31,31 @@ function initRouter(mediator) {
   return router;
 };
 
-module.exports = function(mediator, app) {
+function initSync(mediator, mbaasApi) {
+
+  var dataListHandler = function(dataset_id, query_params, cb, meta_data){
+    var syncData = {};
+    mediator.publish('workflows:load');
+    return mediator.promise('workflows:loaded').then(function(data) {
+      data.forEach(function(workflow) {
+        syncData[workflow.id] = workflow;
+      });
+      return cb(null, syncData);
+    });
+  };  
+ 
+  //start the sync service
+  mbaasApi.sync.init(config.datasetId, config.syncOptions, function(err) {
+    if (err) {
+      console.error(err);
+    } else {
+      mbaasApi.sync.handleList(config.datasetId, dataListHandler);
+    }
+  });
+}
+
+module.exports = function(mediator, app, mbaasApi) {
   var router = initRouter(mediator);
+  initSync(mediator,mbaasApi);
   app.use(config.apiPath, router);
 };

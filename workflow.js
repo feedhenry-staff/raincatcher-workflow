@@ -2,10 +2,35 @@
 
 var angular = require('angular');
 var config = require('./config');
-var ngModule = angular.module('wfm.workflow', ['wfm.core.mediator', 'ngFeedHenry'])
+var ngModule = angular.module('wfm.workflow', ['wfm.core.mediator','wfm.core.sync', 'ngFeedHenry'])
 var _ = require('lodash');
 
-ngModule.run(function($q, $timeout, mediator, FHCloud) {
+ngModule.run(function($q, $timeout, mediator, sync, FHCloud) {
+  
+    //manage the dataSet
+   sync.getSync().manage(config.datasetId, {}, {}, {}, function() {
+    console.log(config.datasetId + " managed by the sync service ");
+    $fh.sync.doList(config.datasetId,
+    function(res) {
+      var workorders =  sync.transformDataSet(res);
+    },
+    function(err) {
+      console.log('Error result from list:', JSON.stringify(err));
+    });
+  });
+
+  var asyncListWorkflows = function() {
+    var d = $q.defer();
+    $fh.sync.doList(config.datasetId,
+    function(res) {
+      var workflows = sync.transformDataSet(res);
+      d.resolve(workflows);
+    },
+    function(err) {
+      d.reject(err);
+    }); 
+    return d.promise;
+  }; 
   var promise = FHCloud.get(config.apiPath).then(function(response) {
     return response;
   }, function(err) {
@@ -13,7 +38,7 @@ ngModule.run(function($q, $timeout, mediator, FHCloud) {
   }); // TODO: introduce retry/error-handling logic
 
   mediator.subscribe('workflows:load', function() {
-    promise.then(function(workflows) {
+    asyncListWorkflows().then(function(workflows) {
       mediator.publish('workflows:loaded', workflows);
     });
   });
