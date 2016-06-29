@@ -1,4 +1,4 @@
-# FeedHenry WFM workflow
+# FeedHenry RainCatcher workflow
 
 This module contains a workflow model representation and its related services :
 - Backend services
@@ -31,7 +31,7 @@ resolve: {
   }
 }
 ```
-For a more complete example, please check the [demo portal app](https://github.com/feedhenry-staff/wfm-portal/blob/master/src/app/main.js).
+For a more complete example, please check the [demo portal app](https://github.com/feedhenry-raincatcher/raincatcher-demo-portal/blob/master/src/app/main.js).
 
 
 ##### `workflowSync` API
@@ -59,7 +59,7 @@ These workflowSync API methods all return Promises:
 ## Usage in an express backend
 
 ### Setup
-The server-side component of this WFM module exports a function that takes express and mediator instances as parameters, as in:
+The server-side component of this RainCatcher module exports a function that takes express and mediator instances as parameters, as in:
 
 ```javascript
 var express = require('express')
@@ -88,7 +88,7 @@ the module broadcasts, and listens for the following events
 
 ### Integration
 
-Check this [demo cloud application](https://github.com/feedhenry-staff/wfm-cloud/blob/master/lib/app/workflow.js)
+Check this [demo cloud application](https://github.com/feedhenry-raincatcher/raincatcher-demo-cloud/blob/master/lib/app/workflow.js)
 
 ### workflow data structure example
 
