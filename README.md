@@ -43,6 +43,10 @@ These workflowSync API methods all return Promises:
 | `workflowSync.manager.create(workflow)` | create a workflow |
 | `workflowSync.manager.read(workflowId)` | read a workflow |
 | `workflowSync.manager.update(workflow)` | update a workflow |
+| `workflowSync.manager.checkStatus(workorder, workflow, result)` | returns the current status of the workflow |
+| `workflowSync.manager.nextStepIndex(steps, result)` | returns the next step index of the workflow |
+| `workflowSync.manager.stepReview(steps, result)` | returns step review of the workflow |
+
 
 #### workflow directives
 
