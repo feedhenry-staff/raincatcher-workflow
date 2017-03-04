@@ -52,7 +52,7 @@ These workflowSync API methods all return Promises:
 
 | Name | Attributes |
 | ---- | ----------- |
-| workflow-progress | stepIndex, workflow |
+| workflow-progress | stepIndex, workflow, overview |
 | workflow-step | step, workflow |
 | workflow-result | workflow, result |
 | workflow-form | value |
