@@ -16,13 +16,13 @@ ngModule.run(['$templateCache', function ($templateCache) {
     '\n' +
     '<div class="scroll-box">\n' +
     '  <ol>\n' +
-    '    <li ng-class="{active: \'-1\' == ctrl.stepIndex, complete: -1 < ctrl.stepIndex}">\n' +
+    '    <li ng-class="{active: \'-1\' == ctrl.stepIndex || ctrl.overview, complete: (-1 < ctrl.stepIndex && !ctrl.overview)}">\n' +
     '      <span class="md-caption"><md-icon md-font-set="material-icons">visibility</md-icon></span>Overview\n' +
     '    </li>\n' +
-    '    <li ng-repeat="step in ctrl.steps" ng-class="{active: $index == ctrl.stepIndex, complete: $index < ctrl.stepIndex}">\n' +
+    '    <li ng-repeat="step in ctrl.steps" ng-class="{active: $index == ctrl.stepIndex && !ctrl.overview, complete: $index < ctrl.stepIndex}">\n' +
     '      <span class="md-caption">{{$index + 1}}</span>{{step.name}}\n' +
     '    </li>\n' +
-    '    <li ng-class="{active: ctrl.steps.length <= ctrl.stepIndex, complete: ctrl.steps.length <= ctrl.stepIndex}">\n' +
+    '    <li ng-class="{active: ctrl.steps.length <= ctrl.stepIndex && !ctrl.overview, complete: ctrl.steps.length <= ctrl.stepIndex}">\n' +
     '      <span class="md-caption"><md-icon md-font-set="material-icons">done</md-icon></span>Summary\n' +
     '    </li>\n' +
     '  </ol>\n' +

@@ -7,13 +7,13 @@
 
 <div class="scroll-box">
   <ol>
-    <li ng-class="{active: '-1' == ctrl.stepIndex, complete: -1 < ctrl.stepIndex}">
+    <li ng-class="{active: \'-1\' == ctrl.stepIndex || ctrl.overview, complete: (-1 < ctrl.stepIndex && !ctrl.overview)}">
       <span class="md-caption"><md-icon md-font-set="material-icons">visibility</md-icon></span>Overview
     </li>
-    <li ng-repeat="step in ctrl.steps" ng-class="{active: $index == ctrl.stepIndex, complete: $index < ctrl.stepIndex}">
+    <li ng-repeat="step in ctrl.steps" ng-class="{active: $index == ctrl.stepIndex && !ctrl.overview, complete: $index < ctrl.stepIndex}">
       <span class="md-caption">{{$index + 1}}</span>{{step.name}}
     </li>
-    <li ng-class="{active: ctrl.steps.length <= ctrl.stepIndex, complete: ctrl.steps.length <= ctrl.stepIndex}">
+    <li ng-class="{active: ctrl.steps.length <= ctrl.stepIndex && !ctrl.overview, complete: ctrl.steps.length <= ctrl.stepIndex}">
       <span class="md-caption"><md-icon md-font-set="material-icons">done</md-icon></span>Summary
     </li>
   </ol>
