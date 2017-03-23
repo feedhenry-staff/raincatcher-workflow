@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         options: {
           reporter: 'Spec',
           logErrors: true,
-          timeout: 1000,
+          timeout: 1500,
           run: true
         }
       }
