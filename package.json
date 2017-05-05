@@ -1,6 +1,6 @@
 {
   "name": "fh-wfm-workflow",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "A workflow module for WFM",
   "repository": {
     "type": "git",
