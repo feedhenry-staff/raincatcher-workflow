@@ -16,7 +16,7 @@
   "author": "Brian Leathem",
   "license": "MIT",
   "dependencies": {
-    "express": "4.15.2",
+    "express": "4.15.3",
     "fh-wfm-mediator": "0.3.3",
     "lodash": "4.17.4",
     "ng-feedhenry": "0.3.0",
