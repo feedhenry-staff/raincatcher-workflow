@@ -1,6 +1,6 @@
 {
   "name": "fh-wfm-workflow",
-  "version": "0.2.5",
+  "version": "1.0.0",
   "description": "A workflow module for WFM",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "4.15.2",
-    "fh-wfm-mediator": "0.3.3",
+    "fh-wfm-mediator": "1.0.0-pre.1",
     "lodash": "4.17.4",
     "ng-feedhenry": "0.3.0",
     "q": "1.4.1",

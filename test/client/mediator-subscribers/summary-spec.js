@@ -2,6 +2,7 @@ var mediator = require("fh-wfm-mediator/lib/mediator");
 var chai = require('chai');
 require('sinon-as-promised');
 var _ = require('lodash');
+var Q = require('q');
 var CONSTANTS = require('../../../lib/constants');
 var WorkflowClient = require('../../../lib/client/workflow-client/index');
 var fixtures = require('../../fixtures/index');
@@ -10,23 +11,15 @@ var expect = chai.expect;
 
 var MediatorTopicUtility = require('fh-wfm-mediator/lib/topics');
 
-var donePrefix = "done:";
-
 var workflowSummaryTopic = "wfm:workflows:step:summary";
-var workflowSummaryDoneTopic = donePrefix + workflowSummaryTopic;
 
 var listResultsTopic = "wfm:results:list";
-var listResultsDoneTopic = donePrefix + listResultsTopic;
 
 var readWorkorderTopic = "wfm:workorders:read";
-var readWorkorderDoneTopic = donePrefix + readWorkorderTopic;
-
 
 var readWorkflowTopic = "wfm:sync:workflows:read";
-var readWorkflowDoneTopic = donePrefix + readWorkflowTopic;
 
 var createResultTopic = "wfm:results:create";
-var createResultDoneTopic = donePrefix + createResultTopic;
 
 var workflowStepSubscribers = new MediatorTopicUtility(mediator);
 workflowStepSubscribers.prefix(CONSTANTS.WORKFLOW_PREFIX).entity(CONSTANTS.STEPS_ENTITY_NAME);
@@ -63,15 +56,14 @@ describe("Getting A Workflow Summary For A Single Workorder", function() {
     //Subscribing to the list results topic
     this.subscribers[listResultsTopic] = mediator.subscribe(listResultsTopic, function() {
 
-      mediator.publish(listResultsDoneTopic, getMockResults(includeResult));
+      return Q.resolve(getMockResults(includeResult));
     });
 
     //Subscribing to the readWorkorder Topic
     this.subscribers[readWorkorderTopic] = mediator.subscribe(readWorkorderTopic, function(parameters) {
       expect(parameters.id).to.equal(mockWorkorder.id);
-      expect(parameters.topicUid).to.equal(mockWorkorder.id);
 
-      mediator.publish(readWorkorderDoneTopic + ":" + mockWorkorder.id, mockWorkorder);
+      return Q.resolve(mockWorkorder);
     });
 
     this.subscribers[createResultTopic] = mediator.subscribe(createResultTopic, function(parameters) {
@@ -81,16 +73,14 @@ describe("Getting A Workflow Summary For A Single Workorder", function() {
       }
 
       expect(parameters.resultToCreate).to.deep.equal(newResult);
-      expect(parameters.topicUid).to.be.a('string');
 
-      mediator.publish(createResultDoneTopic + ":" + parameters.topicUid, newResult);
+      return Q.resolve(newResult);
     });
 
     this.subscribers[readWorkflowTopic] = mediator.subscribe(readWorkflowTopic, function(parameters) {
       expect(parameters.id).to.equal(mockWorkflow.id);
-      expect(parameters.topicUid).to.equal(mockWorkflow.id);
 
-      mediator.publish(readWorkflowDoneTopic + ":" + mockWorkflow.id, mockWorkflow);
+      return Q.resolve(mockWorkflow);
     });
   }
 
@@ -111,13 +101,9 @@ describe("Getting A Workflow Summary For A Single Workorder", function() {
 
     _.bind(createSubscribers, this)(true);
 
-    var summaryDonePromise = mediator.promise(workflowSummaryDoneTopic);
-
-    mediator.publish(workflowSummaryTopic, {
+    return  mediator.publish(workflowSummaryTopic, {
       workorderId: mockWorkorder.id
-    });
-
-    return summaryDonePromise.then(function(stepSummary) {
+    }).then(function(stepSummary) {
       expect(stepSummary.workflow).to.deep.equal(mockWorkflow);
       expect(stepSummary.workorder).to.deep.equal(mockWorkorder);
       expect(stepSummary.nextStepIndex).to.equal(2);

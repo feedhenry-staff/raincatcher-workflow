@@ -1,9 +1,11 @@
 var express = require('express');
 var chai = require('chai');
+var Q = require('q');
+
 var expect = chai.expect;
 var app = express();
 var mockMbaasApi = {};
-var mediator = require('fh-wfm-mediator/lib/mediator.js');
+var mediator = require('fh-wfm-mediator/lib/mediator');
 
 var CLOUD_TOPICS = {
   create: "wfm:cloud:workflows:create",
@@ -38,7 +40,7 @@ describe('Workflow Sync', function() {
     //Mock of the data topic subscriber in the storage module
     mediator.subscribe(CLOUD_DATA_TOPICS.create, function(createdWorkflow) {
       //Publish to done create data topic to fake workflow creation by storage module
-      mediator.publish(DONE + CLOUD_DATA_TOPICS.create + ':' + createdWorkflow.id, createdWorkflow);
+      return Q.resolve(createdWorkflow);
     });
 
     return mediator.request(CLOUD_TOPICS.create, [mockWorkflowCreate, topicId], {uid: topicId}).then(function(createdWorkflow) {
@@ -65,7 +67,7 @@ describe('Workflow Sync', function() {
     //Mock of the data topic subscriber in the storage module
     mediator.subscribe(CLOUD_DATA_TOPICS.list, function(filter) {
       //Publish to done list data topic to fake getting the list of workflows by storage module
-      mediator.publish(DONE + CLOUD_DATA_TOPICS.list + ":" + filter.topicUid, mockWorkflowArray);
+      return Q.resolve(mockWorkflowArray);
     });
 
     return mediator.request(CLOUD_TOPICS.list).then(function(listWorkflow) {
@@ -86,7 +88,7 @@ describe('Workflow Sync', function() {
     //Mock of the data topic subscriber in the storage module
     mediator.subscribe(CLOUD_DATA_TOPICS.update, function(workflowToUpdate) {
       //Publish to done update data topic to fake getting the update of workflows by storage module
-      mediator.publish(DONE + CLOUD_DATA_TOPICS.update + ':' + workflowToUpdate.id, workflowToUpdate);
+      return Q.resolve(workflowToUpdate);
     });
 
     mediator.request(CLOUD_TOPICS.update, mockWorkflowUpdated, {uid: mockWorkflowUpdated.id}).then(function(updatedWorkflow) {
@@ -107,7 +109,7 @@ describe('Workflow Sync', function() {
     //Mock of the data topic subscriber in the storage module
     mediator.subscribe(CLOUD_DATA_TOPICS.read, function(uid) {
       //Publish to done read data topic to fake the reading of workflows by storage module
-      mediator.publish(DONE + CLOUD_DATA_TOPICS.read + ':' + uid, mockWorkflowRead);
+      return Q.resolve(mockWorkflowRead);
     });
 
     return mediator.request(CLOUD_TOPICS.read, uid).then(function(readWorkflow) {
@@ -128,7 +130,7 @@ describe('Workflow Sync', function() {
     //Mock of the data topic subscriber in the storage module
     mediator.subscribe(CLOUD_DATA_TOPICS.delete, function(uid) {
       //Publish to done delete data topic to fake the deleteing of workflows by storage module
-      mediator.publish(DONE + CLOUD_DATA_TOPICS.delete + ':' + uid, mockWorkflowDelete);
+      return Q.resolve(mockWorkflowDelete);
     });
 
     return mediator.request(CLOUD_TOPICS.delete, uid).then(function(deletedWorkflow) {

@@ -4,151 +4,62 @@ This module contains a workflow model representation and its related services :
 - Backend services
 - Frontend services
 
-## Client-side usage
+## Client Topics
 
 ### Topic Subscriptions
 
-#### wfm:workflows:create
+| Topic | Parameters |
+| ----------- | ------------- |
+| wfm:workflows:list |  ```NONE```  |
+| wfm:workflows:read | ```{id: <<id of workflow to read>>}``` |
+| wfm:workflows:update | ```{workflowToUpdate: {<<A valid workflow>>}}``` |
+| wfm:workflows:create | ```{workflowToCreate: {<<A valid workflow>>}}``` |
+| wfm:workflows:remove | ```{id: <<id of workflow to remove>>}``` |
 
-##### Description
 
-Creating a new Workflow
+#### Step Topics
 
-##### Example
+The following topics allow the updating of the workflow state to progress through a workflow.
 
 
-```javascript
-var parameters = {
-  workflowToCreate: {
-    //A Valid JSON Object
-  },
-  //Optional topic unique identifier.
-  topicUid: "uniquetopicid"
+```
+{
+    workflow: {
+      //The details of the current workflow being progressed
+    },
+    workorder: {
+      //The details of the current workorder being progressed
+    },
+    result: {
+      //The current result object for this workorder being progressed
+    },
+    nextStepIndex: 0 //The index of the next step to display
+    step: {
+        //The details of the step to display
+    }
 }
-
-mediator.publish("wfm:workflows:create", parameters);
 ```
 
-#### wfm:workflows:read
+| Topic | Parameters |
+| ---- | ----------- |
+| *wfm:workflows:step:begin*| `{workorderId: "WORKORDERID", topicUid: "WORKORDERID"}` |
+| *wfm:workflows:step:summary*| `{workorderId: "WORKORDERID", topicUid: "WORKORDERID"}` |
+| *wfm:workflows:step:previous*| `{workorderId: "WORKORDERID", topicUid: "WORKORDERID"}` |
+| *wfm:workflows:step:complete*| `{workorderId: "WORKORDERID", topicUid: "WORKORDERID", submission: {...}, stepCode: "CODEOFCOMPLETEDSTEP"}` |
 
-##### Description
-
-Read a single Workflow
-
-##### Example
-
-
-```javascript
-var parameters = {
-  id: "workflowId",
-  //Optional topic unique identifier.
-  topicUid: "uniquetopicid"
-}
-
-mediator.publish("wfm:workflows:read", parameters);
-```
-
-#### wfm:workflows:update
-
-##### Description
-
-Update a single Workflow
-
-##### Example
-
-
-```javascript
-var parameters = {
-  workflowToUpdate: {
-    ...
-    id: "workflowId"
-    ...
-  },
-  //Optional topic unique identifier.
-  topicUid: "uniquetopicid"
-}
-
-mediator.publish("wfm:workflows:update", parameters);
-```
-
-
-#### wfm:workflows:remove
-
-##### Description
-
-Remove a single Workflow
-
-##### Example
-
-
-```javascript
-var parameters = {
-  id: "workflowId",
-  //Optional topic unique identifier.
-  topicUid: "uniquetopicid"
-}
-
-mediator.publish("wfm:workflows:remove", parameters);
-```
-
-
-#### wfm:workflows:list
-
-##### Description
-
-List All Workflows
-
-##### Example
-
-
-```javascript
-var parameters = {
-  //Optional topic unique identifier.
-  topicUid: "uniquetopicid"
-}
-
-mediator.publish("wfm:workflows:list", parameters);
-```
 
 
 ### Published Topics
 
 The following topics are published by this module. Developers are free to implement these topics subscribers, or use a module that already has these subscribers implement (E.g. the [raincatcher-sync](https://github.com/feedhenry-raincatcher/raincatcher-sync) module).
 
-
-| Topic         | Description           |
+| Topic         | Parameters           |
 | ------------- |:-------------:| 
-| wfm:sync:workflows:create              |   Create a new item in the sync `workflows` collection |
-| wfm:sync:workflows:update              |   Update an existing item in the sync `workflows` collection |
-| wfm:sync:workflows:list              |   List all items in the sync `workflows` collection |
-| wfm:sync:workflows:remove              |   Remove an existing item from the sync `workflows` collection |
-| wfm:sync:workflows:read              |   Read a single item from the sync `workflows` collection |
-| wfm:sync:workflows:start              |   Start the sync process for sync `workflows` collection |
-| wfm:sync:workflows:stop              |   Stop the sync process for sync `workflows` collection |
-| wfm:sync:workflows:force_sync        |   Force a sync cycle from client to cloud for sync `workflows` collection |
-
-
-### Topic Subscriptions
-
-| Topic         | Description           |
-| ------------- |:-------------:| 
-| done:wfm:sync:workflows:create        |   A workflow was created in the `workflows` dataset |
-| error:wfm:sync:workflows:create        |   An error occurred when creating an item in the `workflows` dataset. |
-| done:wfm:sync:workflows:update        |   A workflow was updated in the `workflows` dataset |
-| error:wfm:sync:workflows:update        |   An error occurred when updating an item in the `workflows` dataset. |
-| done:wfm:sync:workflows:list        |   A list of the items in the `workflows` dataset completed |
-| error:wfm:sync:workflows:list        |   An error occurred when listing items in the `workflows` dataset. |
-| done:wfm:sync:workflows:remove        |   A workflow was removed from the `workflows` dataset |
-| error:wfm:sync:workflows:remove        |   An error occurred when removing an item in the `workflows` dataset. |
-| done:wfm:sync:workflows:read        |   A item was read correctly from the `workflows` dataset |
-| error:wfm:sync:workflows:read        |   An error occurred when reading an item in the `workflows` dataset. |
-| done:wfm:sync:workflows:start        |   The sync process started for the `workflows` dataset. |
-| error:wfm:sync:workflows:start        |   An error occurred when starting the `workflows` dataset. |
-| done:wfm:sync:workflows:stop        |   The sync process stopped for the `workflows` dataset. |
-| error:wfm:sync:workflows:stop        |   An error occurred when stopping the `workflows` dataset sync process. |
-| done:wfm:sync:workflows:force_sync        |  A force sync process completed for the `workflows` dataset. |
-| error:wfm:sync:workflows:force_sync        |   An error occurred when forcing the sync process for the `workflows` dataset. |
-
+| wfm:sync:workflows:create              |  ```{itemToCreate: workflowToCreate}```  |
+| wfm:sync:workflows:update              |  ```{itemToUpdate: workflowToUpdate}```  |
+| wfm:sync:workflows:list              |  ```NONE```  |
+| wfm:sync:workflows:remove              |  ```{id: <<ID Of Workflow To Remove>>}```  |
+| wfm:sync:workflows:read              |  ```{id: <<ID Of Workflow To Read>>}```  |
 
 ## Usage in an express backend
 
@@ -166,19 +77,34 @@ var express = require('express')
 ...
 
 // setup the wfm workflow sync server
-require('fh-wfm-workflow/server')(mediator, app, mbaasExpress);
-
+require('fh-wfm-workflow/lib/cloud')(mediator, app, mbaasExpress);
 ```
 
-### Server side events
-the module broadcasts, and listens for the following events
+### Cloud Topics
 
-| Listens for | Responds with |
+#### Subscribed Topics
+
+The module subscribes to the following topics
+
+| Topic | Parameters |
 | ----------- | ------------- |
-| `wfm:workflow:list` | `done:wfm:workflow:list` |
-| `wfm:workflow:read` | `done:wfm:workflow:read` |
-| `wfm:workflow:update` | `done:wfm:workflow:update` |
-| `wfm:workflow:create` | `done:wfm:workflow:create` |
+| wfm:cloud:workflows:list |  ```{filter: {<<filter parameters>>}}```  |
+| wfm:cloud:workflows:read | ```<<id of workflow to read>>``` |
+| wfm:cloud:workflows:update | ```{<<<workflow to update>>>}``` |
+| wfm:cloud:workflows:create | ```{<<<workflow to create>>>}``` |
+| wfm:cloud:workflows:delete | ```<<id of workflow to delete>>``` |
+
+
+#### Published Topics
+The module publishes the following topics
+
+| Topic | Parameters |
+| ----------- | ------------- |
+| wfm:cloud:data:workflows:list |  ```{<<filter parameters>>}```  |
+| wfm:cloud:data:workflows:read | ```<<id of workflow to read>>``` |
+| wfm:cloud:data:workflows:update | ```{<<<workflow to update>>>}``` |
+| wfm:cloud:data:workflows:create | ```{<<<workflow to update>>>}``` |
+| wfm:cloud:data:workflows:delete | ```<<id of workflow to delete>>``` |
 
 ### Integration
 

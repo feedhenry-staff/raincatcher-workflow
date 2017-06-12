@@ -3,6 +3,7 @@ var chai = require('chai');
 var _ = require('lodash');
 var CONSTANTS = require('../../../lib/constants');
 var expect = chai.expect;
+var Q = require('q');
 
 var MediatorTopicUtility = require('fh-wfm-mediator/lib/topics');
 var WorkflowClient = require('../../../lib/client/workflow-client/index');
@@ -15,12 +16,8 @@ describe("Workflow Read Mediator Topic", function() {
   };
 
   var readTopic = "wfm:workflows:read";
-  var doneReadTopic = "done:wfm:workflows:read:workflowid";
-  var errorReadTopic = "error:wfm:workflows:read";
 
   var syncReadTopic = "wfm:sync:workflows:read";
-  var doneSyncReadTopic = "done:wfm:sync:workflows:read:workflowid";
-  var errorSyncReadTopic = "error:wfm:sync:workflows:read:workflowid";
 
   var workflowSubscribers = new MediatorTopicUtility(mediator);
   workflowSubscribers.prefix(CONSTANTS.TOPIC_PREFIX).entity(CONSTANTS.WORKFLOW_ENTITY_NAME);
@@ -45,26 +42,17 @@ describe("Workflow Read Mediator Topic", function() {
   it('should use the sync topics to read workflow', function() {
     this.subscribers[syncReadTopic] = mediator.subscribe(syncReadTopic, function(parameters) {
       expect(parameters.id).to.be.a('string');
-      expect(parameters.topicUid).to.equal(mockWorkflow.id);
 
-      mediator.publish(doneSyncReadTopic, mockWorkflow);
+      return Q.resolve(mockWorkflow);
     });
 
-    var donePromise = mediator.promise(doneReadTopic);
-
-    mediator.publish(readTopic, {id: mockWorkflow.id, topicUid: mockWorkflow.id});
-
-    return donePromise.then(function(readWorkflow) {
+    return mediator.publish(readTopic, {id: mockWorkflow.id}).then(function(readWorkflow) {
       expect(readWorkflow).to.deep.equal(mockWorkflow);
     });
   });
 
   it('should publish an error if there is no ID to read', function() {
-    var errorPromise = mediator.promise(errorReadTopic);
-
-    mediator.publish(readTopic);
-
-    return errorPromise.then(function(error) {
+    return  mediator.publish(readTopic).catch(function(error) {
       expect(error.message).to.have.string("Expected An ID");
     });
   });
@@ -73,16 +61,11 @@ describe("Workflow Read Mediator Topic", function() {
     var expectedError = new Error("Error performing sync operation");
     this.subscribers[syncReadTopic] = mediator.subscribe(syncReadTopic, function(parameters) {
       expect(parameters.id).to.be.a('string');
-      expect(parameters.topicUid).to.equal(mockWorkflow.id);
 
-      mediator.publish(errorSyncReadTopic, expectedError);
+      return Q.reject(expectedError);
     });
 
-    var errorPromise = mediator.promise(errorReadTopic + ":" + mockWorkflow.id);
-
-    mediator.publish(readTopic, {id: mockWorkflow.id, topicUid: mockWorkflow.id});
-
-    return errorPromise.then(function(error) {
+    return mediator.publish(readTopic, {id: mockWorkflow.id}).catch(function(error) {
       expect(error).to.deep.equal(expectedError);
     });
   });
