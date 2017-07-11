@@ -8,7 +8,9 @@ services:
   - docker
 script:
   - npm test
-  - bash <(curl https://gist.githubusercontent.com/raincatcher-bot/01ac4cdb3b0770bdb58489dbc17ed6b6/raw/6205a628c3616f6736fd866d5f0fba0a781ec1e4/sonarqube.sh)
+  - >-
+    bash <(curl
+    https://gist.githubusercontent.com/raincatcher-bot/01ac4cdb3b0770bdb58489dbc17ed6b6/raw/6205a628c3616f6736fd866d5f0fba0a781ec1e4/sonarqube.sh)
 notifications:
   email: false
   slack:
@@ -18,4 +20,6 @@ notifications:
       secure: >-
         baVHL+kAkCtYftG4CWUvN0CMYqZb0wiijqAhPogynO53WehC0TJROJHZK/D/BieaceurFQe94mHIa3SrhmfcWr+ROSarMcXgnzdkfRump06JVGqfJDLEVvdqjavZakLJ3WbxeGh02xiTmbBn6aIfC6fw10eu91LvelXy47+OSnd/ar3O8vBBn3RDOmSZgPmmK/0pMvZS613tIPJycR8w5MM2VH5cG/o7dv5yjfrrCwkcJ2OuGv5WDywVULDYjXOhI/y459Tks6zpeI7HpZTmNoRt1jysW66wbHojbBiIKKo/37ex2zWUGOlAN2/bGJtrLqzQkpmAIqvDVz6B9w6XEn2d6AyMKMrmaQiUaQKzitT6wEolLCjqE+P1v/eIJ9JrkRWEsCkvmfWB51SYgSE5BJ6V1XLgIhzJ/EQfhw5HPM4K6PjdJidrt9c7GVPRHyjhZMA/F4VaHqmmwGVJA+Auz3rnHSHycI8AM2BLrDu4ajMe6QMa0sm6IJxllIKY5Il519lfxQ+IVcb4KoUj6NuFtglBsWFAkNHsIVVMnrM2fmmJgHHrEiAaVvFnTHaRZ6hFJM2ip50FgJK93OS5pQNfTEM3T/vh7UuZ/1rtnQPxm8ECfHmUFjdVFY1AfucUUTEiO7E+SIIU2zY3xqBbCHXANZGj24YiDFJB4NogpvXzLak=
     on_pull_requests: false
-
+cache:
+  directories:
+    - node_modules
